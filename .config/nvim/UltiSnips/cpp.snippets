@@ -1,0 +1,37 @@
+
+
+global !p
+def cppInclude(file):
+	CurrentBuffer = vim.current.buffer
+	
+	for line in CurrentBuffer:
+		if '#include<'+file+'>' in line:
+			return 
+
+	CurrentBuffer.append("#include<"+file+">", 1)	
+
+def cppLocalInclude(file):
+	CurrentBuffer = vim.current.buffer
+
+	for line in CurrentBuffer:
+		if '#include "'+file+'"' in line:
+			return 
+
+	CurrentBuffer.append('#include "'+file+'"', 1)	
+
+
+endglobal
+
+snippet stri "auto string" bA
+std::string $0;
+`!p
+	cppInclude("string")
+`
+endsnippet
+
+snippet vec "auto vector" bA
+std::vector<$1> $0;
+`!p
+	cppInclude("vector")
+`
+endsnippet

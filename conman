@@ -1,0 +1,153 @@
+#!/bin/bash
+
+USER_HOME=$HOME
+
+
+EnsureRoot() {
+    if [[ "$EUID" != 0 ]]; then
+        printf "This command requires root \n"
+        exit
+    fi
+    USER_HOME=$(getent passwd $SUDO_USER | cut -d: -f6)
+}
+
+EnsureNoRoot() {
+    if [[ "$EUID" == 0 ]]; then
+        printf "This command should not be run as root \n"
+        exit
+    fi
+}
+
+CheckForDotfilesDirectory() {
+    if [ -d "$USER_HOME/dotfiles" ]; then
+        printf "Found dotfiles directory in $USER_HOME \n"
+    else
+        if [ "$(ssh -T git@github.com)" == "Hi Oxyn4! You've successfully authenticated, but GitHub does not provide shell access." ]; then
+           printf "setup ssh keys for your account \n" 
+           exit
+        else
+            prinf "ssh keys for github working \n"
+        fi
+
+        printf "Missing dotfiles repo \n"
+        printf "Cloning dotfiles repo from https:y//github.com/Oxyn4/dotfiles \n"
+        git clone --bare git@github.com:Oxyn4/dotfiles.git $USER_HOME/dotfiles
+        # dont show untracked files
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME config --local status.showUntrackedFiles no
+        # sudo -u $SUDO_USER /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME config --local user.email "root"
+        # sudo -u $SUDO_USER /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME config --local user.name "root"    
+        touch $USER_HOME/dotfiles/.gitignore
+        # add our repo to stop reccursion
+        echo "dotfiles" >> $USER_HOME/dotfiles/.gitignore
+    fi
+}
+
+printf "Welcome to the dotfiles manager!\n"
+
+case $1 in
+"add")
+    CheckForDotfilesDirectory
+
+    EnsureNoRoot
+
+    if [ -f "$2" ]; then
+        printf "Adding $2 to configuration directory"
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME add $2
+    else
+        printf "$2 does not exist \n"
+        printf "ensure you have provided a full path \n"
+        exit
+    fi
+    ;;
+"list")
+    EnsureNoRoot
+    CheckForDotfilesDirectory
+    printf "Currently Tracked Files: \n\n"
+    /usr/bin/git --work-tree=/home/jacob/ --git-dir=/home/jacob/dotfiles ls-tree --full-tree -r --name-only HEAD
+    ;;
+"save")
+    CheckForDotfilesDirectory
+
+    EnsureNoRoot
+
+    if [ "$2" == "list" ]; then
+        printf "listing saves: \n"
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME log
+    else 
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME commit -m "Updated configuration files"
+    fi    
+    ;;
+"deploy")
+    CheckForDotfilesDirectory
+
+    EnsureNoRoot
+
+    printf "Deploying confuration files \n"
+    /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME checkout
+    ;;    
+"profiles")
+    CheckForDotfilesDirectory
+
+    EnsureNoRoot
+
+    if [ "$2" == "list" ]; then
+        printf "listing profiles: \n"
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME branch
+    elif [ "$2" == "switch" ]; then
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME checkout $3     
+    elif [ "$2" == "new" ]; then
+        printf "Creating a new profile: \n"
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME branch $3     
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME checkout $3     
+    fi
+    ;;
+"init")
+    EnsureNoRoot
+
+    if [ -d "$USER_HOME/dotfiles" ]; then
+        printf "Configuration files aready exist!"
+    else
+        printf "Creating dotfiles directory in $USER_HOME"
+
+        git init --bare $USER_HOME/dotfiles
+        /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME config --local status.showUntrackedFiles no
+        
+        touch $USER_HOME/dotfiles/.gitignore
+        # add our repo to stop reccursion
+        echo "dotfiles" >> $USER_HOME/dotfiles/.gitignore
+    fi
+    ;;
+"remove")
+    EnsureRoot 
+    printf "Removing configuration directory: $USER_HOME/dotfiles \n" 
+
+    if [ -d "$USER_HOME/dotfiles" ]; then
+        rm -fr $USER_HOME/dotfiles
+    else 
+        printf "No dotfile directory found at: $USER_HOME/dotfiles \n"
+    fi
+    ;;
+"download")
+    printf "Downloading github dotfiles repo \n"
+    CheckForDotfilesDirectory
+    ;;
+"publish")
+    printf "publishing configuration files"
+    
+    /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME push $3 
+    ;;
+"install")
+    EnsureRoot
+
+    printf "Installing Configuration manager \n"
+    chmod +x conman
+    cp conman /usr/local/bin/conman
+    ;;
+"uninstall")
+    EnsureRoot
+
+    printf "uninstalling Configuration manager \n"
+    rm /usr/local/bin/conman
+    ;;
+esac
+
