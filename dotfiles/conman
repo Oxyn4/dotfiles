@@ -50,7 +50,7 @@ case $1 in
 
     EnsureNoRoot
 
-    if [ -f "$2" ]; then
+    if [ -f "$2" ] || [ -d "$2" ]; then
         printf "Adding $2 to configuration directory"
         /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME add $2
     else
@@ -127,6 +127,9 @@ case $1 in
         printf "No dotfile directory found at: $USER_HOME/dotfiles \n"
     fi
     ;;
+"unadd")
+    /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME rm --cached $2
+    ;;
 "download")
     printf "Downloading github dotfiles repo \n"
     CheckForDotfilesDirectory
@@ -134,7 +137,7 @@ case $1 in
 "publish")
     printf "publishing configuration files"
     
-    /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME push $3 
+    /usr/bin/git --git-dir=$USER_HOME/dotfiles/ --work-tree=$USER_HOME push origin main
     ;;
 "install")
     EnsureRoot
