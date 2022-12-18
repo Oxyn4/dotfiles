@@ -1,0 +1,38 @@
+#!/bin/python
+
+import sys
+import os
+BasePath="/home/jacob/Media/Music/"
+
+home = os.path.expanduser('~')
+
+def RenameMusic(DirPath):
+    Dir = os.fsdecode(DirPath)
+    for file in os.listdir(Dir):
+        filename = os.fsdecode(file)
+
+        filepath = DirPath + filename
+
+        new_filepath = filepath.replace(" ", "_")
+        
+        new_filepath = new_filepath.replace("\'", "")
+
+        os.rename(filepath, new_filepath)
+
+        if os.path.isdir(filepath):
+            RenameMusic(filepath + "/")
+
+RenameMusic(BasePath)
+
+def IterateOverFilesInDirectory(DirPath):
+    Dir = os.fsencode(DirPath)
+    for file in os.listdir(Dir):
+        filename = os.fsdecode(file)
+        filepath = DirPath + filename
+        if os.path.isdir(filepath):
+            IterateOverFilesInDirectory(filepath + "/")
+        else:
+            print(str(filepath))
+
+IterateOverFilesInDirectory(BasePath)
+

@@ -1,0 +1,4 @@
+mpc volume +5 &>/dev/null
+
+
+notify-send "Current mpd volume: $(mpc status "%volume%")"

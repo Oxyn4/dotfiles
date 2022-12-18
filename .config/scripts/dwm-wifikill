@@ -1,0 +1,9 @@
+
+dunstctl close-all
+
+if [[ "$(rfkill)" == *" blocked "* ]]
+then
+    notify-send "睊 Wifi is now hardware blocked"
+else
+    notify-send  "直 Wifi is now unblocked"
+fi

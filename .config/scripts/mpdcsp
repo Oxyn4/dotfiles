@@ -1,0 +1,30 @@
+#!/bin/python
+
+import subprocess as sub
+
+import os
+
+MusicPath = "/home/jacob/Music/"
+
+currsong = sub.Popen(["mpc", "-f", "%file%", "current"], stdout=sub.PIPE, stderr=sub.PIPE, text=True)
+
+#fcurrsong = str(currsong.stdout.read()).replace("\n", "").replace(" ", "_") + ".mp3"
+
+relpath = str(currsong.stdout.read())
+
+if relpath != "":
+    print("/home/jacob/Media/Music/" + relpath)
+
+#def RecursiveDirectorySearch(Base):
+    # Dir = os.fsdecode(Base)
+    # for file in os.listdir(Dir):
+        # filename = os.fsdecode(file)
+        # filepath = Base + filename
+        # if os.path.isdir(filepath):
+            # RecursiveDirectorySearch(filepath + "/")
+        # else:
+            # if filename == fcurrsong:
+                # print(filepath)
+
+# RecursiveDirectorySearch(MusicPath)
+

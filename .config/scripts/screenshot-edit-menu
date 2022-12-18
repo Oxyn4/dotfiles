@@ -1,0 +1,65 @@
+#!/bin/sh
+
+if [ -e "~/.screenshotindex" ]; then 
+    rm -f "~/.screenshotindex"
+fi
+
+python << HEREDOC
+import sys
+import os
+BasePath="/home/jacob/screenshots/"
+
+home = os.path.expanduser('~')
+
+def RenameMusic(DirPath):
+    Dir = os.fsdecode(DirPath)
+    for file in os.listdir(Dir):
+        filename = os.fsdecode(file)
+
+        filepath = DirPath + filename
+
+        new_filepath = filepath.replace(" ", "_")
+
+        os.rename(filepath, new_filepath)
+
+        if os.path.isdir(filepath):
+            RenameMusic(filepath + "/")
+
+RenameMusic(BasePath)
+
+f = open(home + "/.screenshotsindex", "w+")
+
+def IterateOverFilesInDirectory(DirPath):
+    Dir = os.fsencode(DirPath)
+    for file in os.listdir(Dir):
+        filename = os.fsdecode(file)
+        filepath = DirPath + filename
+        if os.path.isdir(filepath):
+            IterateOverFilesInDirectory(filepath + "/")
+        else:
+            f.write(str(filepath + "\n"))
+
+IterateOverFilesInDirectory(BasePath)
+
+f.close()
+HEREDOC
+
+SONG=$(cat ~/.screenshotsindex | rofi -dmenu -i -p "screenshot select: ")
+
+python << HEREDOC | cat
+import os
+
+song="$SONG"
+
+formsong = song.replace(" ", "\ ")
+
+formsong = formsong.replace("/home/jacob/screenshots/", "")
+
+print(formsong)
+
+HEREDOC
+
+#echo -e "$SONGS" | dmenu -i -p "select song: "
+if [ ! -z "$SONG" ]; then
+    echo "$SONG" | xargs gimp
+fi

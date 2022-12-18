@@ -1,0 +1,10 @@
+pamixer --source 1 -t
+
+dunstctl close-all
+
+if [ $(pamixer --source 1 --get-mute) = true ]
+then
+    notify-send "  Microphone is muted"
+else
+    notify-send " Microphone is unmuted"
+fi

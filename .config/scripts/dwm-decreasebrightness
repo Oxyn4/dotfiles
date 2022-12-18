@@ -1,0 +1,10 @@
+
+if [ $(xbacklight -get) = "No outputs have backlight property" ]
+then
+    notify-send "Xbacklight: No outputs have backlight property"
+fi
+
+status=$(xbacklight -dec 5)
+
+dunstctl close-all
+notify-send "盛 Current brightness: $(xbacklight -get)"

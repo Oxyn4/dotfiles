@@ -1,0 +1,7 @@
+#!/bin/sh
+
+printf "Please enter a name for the tmux session: "
+
+read NAME
+
+tmux new-session -s $NAME

@@ -1,0 +1,60 @@
+#!/bin/sh
+
+# Prints all batteries, their percentage remaining and an emoji corresponding
+# to charge status (🔌 for plugged up, 🔋 for discharging on battery, etc.).
+# Loop through all attached batteries and format the info
+for battery in /sys/class/power_supply/BAT?*; do
+	# If non-first battery, print a space separator.
+	[ -n "${capacity+x}" ] && printf " "
+	# Sets up the status and capacity
+	case "$(cat "$battery/status" 2>&1)" in
+		"Full") status=" " ;;
+		"Discharging") status="" ;;
+		"Charging") status="" ;;
+		"Not charging") status="" ;;
+		"Unknown") status=""  ;;
+		*) exit 1 ;;
+	esac
+	capacity="$(cat "$battery/capacity" 2>&1)"
+	
+	# Will make a warn variable if discharging and low
+	if [ "$status" = "" ] && [ "$capacity" -le 25 ] 
+	then
+		status=""
+	fi
+
+	# Prints the info
+	if  [ $capacity -le 10 ] && [ $capacity -ge 0 ] 
+	then
+	    capacity_icon=""
+    elif [ $capacity -le 20 ] && [ $capacity -ge 11 ]
+	then
+	    capacity_icon=""
+    elif [ $capacity -le 30 ] && [ $capacity -ge 21 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 40 ] && [ $capacity -ge 31 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 50 ] && [ $capacity -ge 41 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 60 ] && [ $capacity -ge 51 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 70 ] && [ $capacity -ge 61 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 80 ] && [ $capacity -ge 71 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 90 ] && [ $capacity -ge 81 ]
+	then
+	   capacity_icon=""
+    elif [ $capacity -le 100 ] && [ $capacity -ge 91 ]
+	then
+	   capacity_icon=""
+	fi
+
+	printf "%s%s%d%%" "$status" "$capacity_icon" "$capacity"; unset warn
+done && printf "\\n"

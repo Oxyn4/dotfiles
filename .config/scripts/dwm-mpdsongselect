@@ -1,0 +1,19 @@
+#!/bin/sh
+
+SONG=$(echo -e "$(mpd-print-all-songs)" | rofi -dmenu -i -p "song select: ")
+
+python << HEREDOC | cat
+import os
+
+song="$SONG"
+
+formsong = song.replace(" ", "\ ")
+
+formsong = formsong.replace("/home/jacob/Media/Music/", "")
+
+print(str(formsong))
+
+HEREDOC
+
+#echo -e "$SONGS" | dmenu -i -p "select song: "
+

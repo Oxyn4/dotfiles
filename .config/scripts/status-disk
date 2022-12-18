@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Status bar module for disk space
+# $1 should be drive mountpoint, otherwise assumed /.
+
+location=${1:-/}
+Secondlocation=${1:-/home/}
+
+[ -d "$location" ] || exit
+
+printf "%s: %s " " " "$(df -h "$location" | awk ' /[0-9]/ {print $3 "/" $2}')" 
+
+
+printf "%s: %s\n" " " "$(df -h "$Secondlocation" | awk ' /[0-9]/ {print $3 "/" $2}')"

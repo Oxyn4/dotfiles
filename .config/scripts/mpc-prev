@@ -1,0 +1,34 @@
+#!/bin/sh
+
+mpc prev &>/dev/null
+
+SONG=$(mpc current -f '%title%')
+ARTIST=$(mpc current -f '%artist%')
+
+SONG_FILE=$(mpdcsp)
+
+if [ -z $SONG_FILE  ]; then
+    exit
+fi 
+
+ffmpeg -y -i $SONG_FILE -an -c:v copy $HOME/.mpdcurrenttrackart.png &>/dev/null 
+
+if [ -f "$HOME/.mpdnotificationsid" ]; then
+    # get the id of prev run
+    PREVIOUS_SCRIPT_RUN_ID=$(cat $HOME/.mpdnotificationsid)
+   
+    # create new notification to replace old one
+    NOTIFICATION_ID=$(notify-send -p -r "$PREVIOUS_SCRIPT_RUN_ID" -i "$HOME/.mpdcurrenttrackart.png" " Now playing: $SONG - $ARTIST")
+
+    rm $HOME/.mpdnotificationsid
+    
+    echo $NOTIFICATION_ID >> $HOME/.mpdnotificationsid
+else 
+    NOTIFICATION_ID=$(notify-send -p -i "$HOME/.mpdcurrenttrackart.png" " Now playing: $SONG - $ARTIST")
+    
+    #write notification number to file
+    echo $NOTIFICATION_ID >> $HOME/.mpdnotificationsid
+fi
+#notify-send " Now playing: $SONG - $ARTIST"
+
+rm $HOME/.mpdcurrenttrackart.png

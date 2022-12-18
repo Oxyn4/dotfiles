@@ -1,0 +1,8 @@
+#!/bin/sh
+# reload software
+
+bspc wm -r
+
+polybar-msg cmd restart
+
+pkill -USR1 -x sxhkd

@@ -1,0 +1,27 @@
+name=$(zenity --entry --text="Name for file")
+
+if [ -z "$name" ]; then 
+    notify-send " Cancelling screenshot"
+    exit
+fi
+
+path="$HOME/screenshots/"
+
+ext=".png"
+
+saveto="$path$name$ext"
+
+if [[ -f "$saveto" ]]; then
+    notify-send "  Error: $saveto already exists!"
+    exit
+fi 
+
+if [[ ! -d "$HOME/screenshots/" ]]; then 
+    mkdir $HOME/screenshots/
+fi 
+
+scrot -s -F $saveto 
+
+notify-send -i "$saveto" "  saved screenshot to: $saveto"
+
+xclip -se clip -t image/png $saveto

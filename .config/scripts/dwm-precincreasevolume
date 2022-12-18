@@ -1,0 +1,13 @@
+pamixer -i 1
+dunstctl close-all
+
+mute=$(pamixer --get-mute)
+
+if [ $mute = false ]
+then
+    notify-send "  Volume:" -h int:value:$(pamixer --get-volume-human) -h string:synchronous:volume
+elif [ $mute = true ]
+then
+    notify-send "婢 Audio is currently muted"
+fi
+

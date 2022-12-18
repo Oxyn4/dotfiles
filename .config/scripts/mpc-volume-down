@@ -1,0 +1,19 @@
+mpc volume -5 &>/dev/null
+
+if [ -f "$HOME/mpdnotificationid" ]; then
+    # get the id of prev run
+    PREVIOUS_SCRIPT_RUN_ID=$(cat $HOME/.mpdnotificationid)
+    
+    echo $PREVIOUS_SCRIPT_RUN_ID
+
+    # create new notification to replace old one
+    NOTIFICATION_ID=$(notify-send -r $PREVIOUS_SCRIPT_RUN_ID " Current volume: $(mpc status "%volume%")")
+
+    rm $HOME/.mpdnotificationsid
+else 
+    NOTIFICATION_ID=$(notify-send -p " Current volume: $(mpc status "%volume%")")
+    
+    #write notification number to file
+    echo $NOTIFICATION_ID >> $HOME/.mpdnotificationid
+fi
+

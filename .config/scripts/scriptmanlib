@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# functions 
+
+EnsureInstalled() {
+    # looks weird because this captures stderr aswell as stdout
+    PACMAN_CHECK="$(pacman -Q $1 2>&1)"
+    # echo "error: package '$1' was not found" 
+    if [ "$PACMAN_CHECK" = "error: package '$1' was not found" ]; then
+        exit
+    else
+        printf "installed\n"
+    fi 
+}

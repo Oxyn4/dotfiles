@@ -1,0 +1,5 @@
+#!/bin/sh
+
+notify-send "Killed tmux server"
+
+tmux kill-server

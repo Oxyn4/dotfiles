@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -f "$HOME/.tmux-sesh" ]; then
+    rm $HOME/.tmux-sesh
+fi
+
+tmux ls -F "#{session_name}" >> $HOME/.tmux-sesh
+
+SESH=$(cat $HOME/.tmux-sesh | rofi -i -dmenu -p "attach to tmux session: ")
+
+kitty /usr/bin/tmux attach -t $SESH

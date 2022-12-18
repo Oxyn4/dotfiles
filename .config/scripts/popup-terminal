@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# needs rule set in bspwmrc
+
+kitty --class popupterm
+
+#xdotool search --class kittypopupterm -- windowsize --usehints %@ 50 50
+
+
+
+
+

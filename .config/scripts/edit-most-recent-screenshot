@@ -1,0 +1,9 @@
+path="$HOME/screenshots/"
+
+ext=".png"
+
+NEWEST=$(ls -lrt $path | tail -1 | awk '{ print $9 }')
+
+FINAL="$path$NEWEST"
+
+gimp $FINAL

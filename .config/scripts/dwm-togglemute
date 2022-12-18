@@ -1,0 +1,3 @@
+pamixer -t
+dunstctl close-all
+notify-send "Mute: $(pamixer --get-mute)"

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+SONG=$(dwm-mpdsongselect)
+
+if [ -z "$SONG" ]; then
+    exit 
+fi
+
+ffmpeg -y -i $SONG -an -c:v copy $HOME/.mpdcurrenttrackart.png &>/dev/null
+
+notify-send -i "$HOME/.mpdcurrenttrackart.png" " added: $SONG - $ARTIST to current playlist"
+
+echo $SONG | mpc add

@@ -1,0 +1,6 @@
+wp_path=/home/jacob/.config/walls/
+image=$(ls $wp_path | grep -E '(jpg|png)$' | sort -R | tail -1)
+
+cp -f $wp_path/$image /usr/share/sddm/themes/sugar-candy/Backgrounds/wall.jpg
+
+feh --bg-scale $wp_path/$image
