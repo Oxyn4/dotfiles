@@ -1,0 +1,36 @@
+super + Return
+	    kitty
+
+super + c
+	    firefox
+
+super + shift + c
+        firefox -p School
+
+super + q + @q
+    bspc node -k
+
+super + r
+	bspwm-reload
+
+super + shift + q
+        bspc quit
+
+super + l
+        dwm-screenlock
+
+super + n
+        toggle-redshift
+
+super + d
+        rofi -show run
+
+# focus or send to the given desktop
+super + {_,shift + }{1-9,0}
+    bspc {desktop -f,node -d} '^{1-9,10}'
+
+super + b
+    bookmenu
+
+super + m
+    mpda
